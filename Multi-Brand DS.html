@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Multi-Brand Design System</title>
+<link rel="stylesheet" href="base.css" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="tokens.js"></script>
+<script type="text/babel" src="components.jsx"></script>
+<script type="text/babel" src="pages.jsx"></script>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+// ─── Token export helpers ────────────────────────────────────────────────────
+function buildCSSVars(brandKey) {
+  const b = window.GENESIS_TOKENS.brands[brandKey];
+  return `/* Theme: ${b.name} */
+.brand-${brandKey} {
+  /* Color · alias */
+  --brand-primary: ${b.primary};
+  --brand-primary-hover: ${b.primaryHover};
+  --brand-primary-pressed: ${b.primaryPressed};
+  --brand-primary-soft: ${b.primarySoft};
+  --brand-on-primary: ${b.onPrimary};
+  --brand-accent: ${b.accent};
+  --brand-text: ${b.text};
+  --brand-text-muted: ${b.textMuted};
+  --brand-bg: ${b.bg};
+  --brand-bg-elev: ${b.bgElev};
+  --brand-border: ${b.border};
+
+  /* Typography */
+  --brand-font-display: ${b.fontDisplay};
+  --brand-font-body:    ${b.fontBody};
+  --brand-font-mono:    ${b.fontMono};
+
+  /* Radius + density */
+  --radius-sm: ${b.radiusSm}px;
+  --radius-md: ${b.radiusMd}px;
+  --radius-lg: ${b.radiusLg}px;
+  --radius-pill: ${b.radiusPill}px;
+  --density: ${b.density};
+}`;
+}
+
+function buildJSON(brandKey) {
+  const b = window.GENESIS_TOKENS.brands[brandKey];
+  const t = window.GENESIS_TOKENS;
+  return JSON.stringify({
+    $schema: "genesis-theme.schema.json",
+    brand: { key: brandKey, name: b.name, tagline: b.tagline, voice: b.voice },
+    color: {
+      primary: b.primary, primaryHover: b.primaryHover,
+      primaryPressed: b.primaryPressed, primarySoft: b.primarySoft,
+      onPrimary: b.onPrimary, accent: b.accent,
+      text: b.text, textMuted: b.textMuted,
+      bg: b.bg, bgElev: b.bgElev, border: b.border,
+      semantic: t.semantic, neutral: t.palette.neutral,
+    },
+    type: { fontDisplay: b.fontDisplay, fontBody: b.fontBody, fontMono: b.fontMono, scale: t.typeScale },
+    radius: { sm: b.radiusSm, md: b.radiusMd, lg: b.radiusLg, pill: b.radiusPill },
+    density: b.density, spacing: t.spacing, elevation: t.elevation,
+  }, null, 2);
+}
+
+// ─── Token export drawer ─────────────────────────────────────────────────────
+function Drawer({ open, onClose, brandKey }) {
+  const [tab, setTab] = useState("css");
+  const [copied, setCopied] = useState(false);
+  const content = tab === "css" ? buildCSSVars(brandKey) : buildJSON(brandKey);
+  const copy = () => { navigator.clipboard.writeText(content); setCopied(true); setTimeout(() => setCopied(false), 1500); };
+  const download = () => {
+    const ext = tab === "css" ? "css" : "json";
+    const blob = new Blob([content], { type: tab === "css" ? "text/css" : "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `theme-${brandKey}.${ext}`; a.click();
+    URL.revokeObjectURL(url);
+  };
+  return (
+    <React.Fragment>
+      <div className={"drawer-backdrop" + (open ? " open" : "")} onClick={onClose} />
+      <aside className={"drawer" + (open ? " open" : "")} aria-hidden={!open}>
+        <div className="drawer-head">
+          <h2>Export theme · {window.GENESIS_TOKENS.brands[brandKey].name}</h2>
+          <button className="close" onClick={onClose} aria-label="Cerrar">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+          </button>
+        </div>
+        <div className="drawer-tabs">
+          <button onClick={() => setTab("css")}  aria-current={tab === "css"}>CSS Variables</button>
+          <button onClick={() => setTab("json")} aria-current={tab === "json"}>JSON</button>
+        </div>
+        <div className="drawer-body"><pre>{content}</pre></div>
+        <div className="drawer-foot">
+          <button className="btn-copy" onClick={copy}>{copied ? "Copiado ✓" : "Copiar"}</button>
+          <button className="btn-outline" onClick={download}>Descargar .{tab === "css" ? "css" : "json"}</button>
+          <span className="mono" style={{ marginLeft:"auto", color:"var(--brand-text-muted)" }}>
+            {content.split("\n").length} líneas
+          </span>
+        </div>
+      </aside>
+    </React.Fragment>
+  );
+}
+
+// ─── Sidebar navigation ───────────────────────────────────────────────────────
+const NAV_TREE = [
+  {
+    group: "Overview",
+    items: [
+      { id: "overview", label: "Visión general" },
+    ],
+  },
+  {
+    group: "Foundations",
+    items: [
+      { id: "foundations/colors",     label: "Colors" },
+      { id: "foundations/typography", label: "Typography" },
+      { id: "foundations/spacing",    label: "Spacing" },
+      { id: "foundations/radius",     label: "Radius" },
+      { id: "foundations/shadows",    label: "Shadows" },
+      { id: "foundations/borders",    label: "Borders" },
+    ],
+  },
+  {
+    group: "Components",
+    items: [
+      { id: "components/buttons",    label: "Buttons" },
+      { id: "components/inputs",     label: "Inputs" },
+      { id: "components/badges",     label: "Badges" },
+      { id: "components/tags",       label: "Tags" },
+      { id: "components/cards",      label: "Cards" },
+      { id: "components/alerts",     label: "Alerts" },
+      { id: "components/avatars",    label: "Avatars" },
+      { id: "components/accordion",  label: "Accordion" },
+      { id: "components/breadcrumb", label: "Breadcrumb" },
+      { id: "components/calendar",   label: "Calendar" },
+      { id: "components/checkbox",   label: "Checkbox" },
+      { id: "components/divider",    label: "Divider" },
+      { id: "components/dropdown",   label: "Dropdown" },
+    ],
+  },
+  {
+    group: "Patterns",
+    items: [
+      { id: "patterns/login",            label: "Login" },
+      { id: "patterns/dashboard",        label: "Dashboard" },
+      { id: "patterns/create-platform",  label: "Create platform" },
+      { id: "patterns/brand-setup",      label: "Brand setup" },
+      { id: "patterns/user-profile",     label: "User profile" },
+    ],
+  },
+];
+
+const VIEW_MAP = {
+  "overview":                   "DS_Overview",
+  "foundations/colors":         "DS_Colors",
+  "foundations/typography":     "DS_Typography",
+  "foundations/spacing":        "DS_Spacing",
+  "foundations/radius":         "DS_Radius",
+  "foundations/shadows":        "DS_Shadows",
+  "foundations/borders":        "DS_Borders",
+  "components/buttons":         "DS_Buttons",
+  "components/inputs":          "DS_Inputs",
+  "components/badges":          "DS_Badges",
+  "components/tags":            "DS_Tags",
+  "components/cards":           "DS_Cards",
+  "components/alerts":          "DS_Alerts",
+  "components/avatars":         "DS_Avatars",
+  "components/accordion":       "DS_Accordion",
+  "components/breadcrumb":      "DS_Breadcrumb",
+  "components/calendar":        "DS_Calendar",
+  "components/checkbox":        "DS_Checkbox",
+  "components/divider":         "DS_Divider",
+  "components/dropdown":        "DS_Dropdowns",
+  "patterns/login":             "DS_PatternLogin",
+  "patterns/dashboard":         "DS_PatternDashboard",
+  "patterns/create-platform":   "DS_PatternCreatePlatform",
+  "patterns/brand-setup":       "DS_PatternBrandSetup",
+  "patterns/user-profile":      "DS_PatternUserProfile",
+};
+
+function SidebarNav({ activeView, onSelect }) {
+  return (
+    <nav className="sidebar-nav" aria-label="Design System navigation">
+      {NAV_TREE.map((group) => (
+        <div key={group.group} className="snav-group">
+          <div className="snav-group-label">{group.group}</div>
+          {group.items.map(item => (
+            <button
+              key={item.id}
+              className={"snav-item" + (activeView === item.id ? " active" : "")}
+              onClick={() => onSelect(item.id)}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      ))}
+    </nav>
+  );
+}
+
+// ─── App ──────────────────────────────────────────────────────────────────────
+function App() {
+  const [brandKey, setBrandKey] = useState(() => {
+    const saved = localStorage.getItem("ds.brand");
+    return (saved && window.GENESIS_TOKENS.brands[saved]) ? saved : "zamna";
+  });
+  const [activeView, setActiveView] = useState(() => localStorage.getItem("ds.view") || "overview");
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  useEffect(() => { localStorage.setItem("ds.brand", brandKey); }, [brandKey]);
+  useEffect(() => { localStorage.setItem("ds.view", activeView); }, [activeView]);
+
+  const brand  = window.GENESIS_TOKENS.brands[brandKey];
+  const brands = window.GENESIS_TOKENS.brands;
+
+  const handleSelect = (id) => {
+    setActiveView(id);
+    window.scrollTo({ top: 0, behavior: "instant" });
+  };
+
+  const ViewComponent = window[VIEW_MAP[activeView]] || window.DS_Overview;
+
+  return (
+    <div className={"site brand-" + brandKey}>
+
+      {/* ── Topbar ── */}
+      <header className="topbar">
+        <div className="topbar-inner">
+          <div className="brand-logo">
+            <span className="mark">DS</span>
+            Multi-Brand
+            <span className="mono" style={{ color:"var(--brand-text-muted)", marginLeft:6, fontWeight:400, fontSize:11 }}>v1.0</span>
+          </div>
+          <div className="topbar-actions">
+            <button className="btn-tokens" onClick={() => setDrawerOpen(true)}>
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              Exportar theme
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* ── Brand switcher bar ── */}
+      <div className="brandbar">
+        <div className="brandbar-inner">
+          {Object.entries(brands).map(([key, b]) => (
+            <button key={key} className="brand-tab" aria-current={key === brandKey} onClick={() => setBrandKey(key)}>
+              <span className="swatch" style={{ background: b.primary }} />
+              {b.name}
+            </button>
+          ))}
+          <div className="brandbar-right">
+            <span>FONT · {brand.fontDisplay.split(",")[0].replace(/['"]/g,"").toUpperCase()}</span>
+            <span>RADIUS · {brand.radiusMd}px</span>
+            <span style={{ display:"inline-flex", alignItems:"center", gap:6 }}>
+              <span style={{ width:8, height:8, borderRadius:999, background:brand.primary }} />
+              {brand.primary.toUpperCase()}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Main layout: content + right sidebar ── */}
+      <div className="app-body">
+        <SidebarNav activeView={activeView} onSelect={handleSelect} />
+        <main className="content-area">
+          <ViewComponent brand={brand} brandKey={brandKey} />
+        </main>
+      </div>
+
+      <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} brandKey={brandKey} />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
