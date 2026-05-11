@@ -192,7 +192,7 @@ window.GENESIS_TOKENS = {
 
   brands: {
     zamna: {
-      name: "Zamna",
+      name: "Zamna & Mandala",
       tagline: "Minimalista · editorial · high-end · dark.",
       voice: "Sobria, curada, confiada. Sin adornos innecesarios.",
       primary: "#000000",
