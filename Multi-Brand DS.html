@@ -289,12 +289,12 @@ function App() {
           <div className="brand-logo">
             <span className="mark">DS</span>
             Multi-Brand
-            <span className="mono" style={{ color:"var(--brand-text-muted)", marginLeft:6, fontWeight:400, fontSize:11 }}>v1.0</span>
+            <span style={{ color:"var(--doc-muted)", marginLeft:8, fontWeight:400, fontSize:10, letterSpacing:"0.04em" }}>v1.0</span>
           </div>
           <div className="topbar-actions">
             <button className="btn-tokens" onClick={() => setDrawerOpen(true)}>
-              <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              Exportar theme
+              <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              Export tokens
             </button>
           </div>
         </div>
@@ -310,21 +310,29 @@ function App() {
             </button>
           ))}
           <div className="brandbar-right">
-            <span>FONT · {brand.fontDisplay.split(",")[0].replace(/['"]/g,"").toUpperCase()}</span>
-            <span>RADIUS · {brand.radiusMd}px</span>
-            <span style={{ display:"inline-flex", alignItems:"center", gap:6 }}>
-              <span style={{ width:8, height:8, borderRadius:999, background:brand.primary }} />
+            <span>{brand.fontDisplay.split(",")[0].replace(/['"]/g,"").toUpperCase()}</span>
+            <span>r={brand.radiusMd}px</span>
+            <span style={{ display:"inline-flex", alignItems:"center", gap:5 }}>
+              <span style={{ width:8, height:8, borderRadius:999, background:brand.primary, flexShrink:0 }} />
               {brand.primary.toUpperCase()}
             </span>
           </div>
         </div>
       </div>
 
-      {/* ── Main layout: content + right sidebar ── */}
+      {/* ── Main layout: sidebar + content ── */}
       <div className="app-body">
         <SidebarNav activeView={activeView} onSelect={handleSelect} />
         <main className="content-area">
-          <ViewComponent brand={brand} brandKey={brandKey} />
+          {/* ╔═══════════════════════════════════════════════════╗
+              ║  BRAND PREVIEW SCOPE                              ║
+              ║  --brand-* tokens only cascade inside here.       ║
+              ║  The doc shell above is always Roboto Mono +       ║
+              ║  neutral colors regardless of active brand.       ║
+              ╚═══════════════════════════════════════════════════╝ */}
+          <div className={"brand-preview brand-" + brandKey}>
+            <ViewComponent brand={brand} brandKey={brandKey} />
+          </div>
         </main>
       </div>
 
