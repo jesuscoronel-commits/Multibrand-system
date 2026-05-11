@@ -43,24 +43,6 @@ function DS_Overview({ brand, brandKey }) {
       <div className="section">
         <div className="section-head">
           <span className="section-num">01</span>
-          <h2 className="section-title">Mismo componente · 4 marcas</h2>
-          <p className="section-desc">Un solo componente. Cero lógica por marca. El theme resuelve color, tipografía y radio.</p>
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: `repeat(${brandCount}, 1fr)`, gap: 16 }}>
-          {Object.entries(t.brands).map(([key, b]) => (
-            <BrandPreview key={key} brandKey={key} brand={b}>
-              <GButton variant="primary" icon={Icon.arrow}>Comprar ahora</GButton>
-              <GButton variant="secondary">Ver más</GButton>
-              <GButton variant="outline" size="sm">Pequeño</GButton>
-              <GTag type="primary" size="sm" label="Disponible" />
-            </BrandPreview>
-          ))}
-        </div>
-      </div>
-
-      <div className="section">
-        <div className="section-head">
-          <span className="section-num">02</span>
           <h2 className="section-title">Arquitectura de tokens</h2>
           <p className="section-desc">Tres capas. Los componentes solo leen la tercera.</p>
         </div>
@@ -106,7 +88,7 @@ function DS_Overview({ brand, brandKey }) {
 
       <div className="section">
         <div className="section-head">
-          <span className="section-num">03</span>
+          <span className="section-num">02</span>
           <h2 className="section-title">Las marcas</h2>
           <p className="section-desc">Cada una consume el mismo contrato de theme.</p>
         </div>
@@ -150,7 +132,7 @@ function DS_Overview({ brand, brandKey }) {
 
       <div className="section">
         <div className="section-head">
-          <span className="section-num">04</span>
+          <span className="section-num">03</span>
           <h2 className="section-title">Agregar una marca nueva</h2>
           <p className="section-desc">3 pasos. Cero cambios a componentes.</p>
         </div>
