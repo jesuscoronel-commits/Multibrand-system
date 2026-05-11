@@ -24,6 +24,54 @@ window.GENESIS_TOKENS = {
       900: "#14161B",
       950: "#0A0B0E",
     },
+    blue: {
+      50:  "#E7EEF9",
+      100: "#B3C9ED",
+      200: "#8FAFE4",
+      300: "#5C8AD8",
+      400: "#3C73D1",
+      500: "#0B50C5",
+      600: "#0A49B3",
+      700: "#08398C",
+      800: "#062C6C",
+      900: "#052253",
+    },
+    red: {
+      50:  "#FDE6E8",
+      100: "#F8B2B8",
+      200: "#F48C96",
+      300: "#F05866",
+      400: "#ED3749",
+      500: "#E8051B",
+      600: "#D30519",
+      700: "#A50413",
+      800: "#80030F",
+      900: "#61020B",
+    },
+    yellow: {
+      50:  "#FFF9E6",
+      100: "#FFEEB0",
+      200: "#FFE58A",
+      300: "#FFD954",
+      400: "#FFD233",
+      500: "#FFC700",
+      600: "#E8B500",
+      700: "#B58D00",
+      800: "#8C6D00",
+      900: "#6B5400",
+    },
+    green: {
+      50:  "#E9F9E6",
+      100: "#BAECB0",
+      200: "#99E38A",
+      300: "#6AD654",
+      400: "#4DCE33",
+      500: "#21C200",
+      600: "#1EB100",
+      700: "#178A00",
+      800: "#126B00",
+      900: "#0E5100",
+    },
   },
 
   // Escala tipográfica (misma para todas las marcas — cambia la familia, no la escala)
@@ -41,7 +89,7 @@ window.GENESIS_TOKENS = {
     { token: "font-caption",   px: 12, rem: "0.75rem", lh: "16px", weight: 500, letterSpacing: "0.01em" },
   ],
 
-  // Escala de espaciado (múltiplo de 4)
+  // Escala de espaciado (múltiplo de 4) — legacy keys, kept for compatibility
   spacing: {
     "0":   "0px",
     "1":   "2px",
@@ -58,6 +106,57 @@ window.GENESIS_TOKENS = {
     "12":  "80px",
     "13":  "96px",
     "14":  "128px",
+  },
+
+  // Global size primitives — tokens named by their px value
+  sizes: {
+    0: 0, 2: 2, 4: 4, 6: 6, 8: 8, 10: 10, 12: 12, 14: 14,
+    16: 16, 20: 20, 24: 24, 28: 28, 32: 32, 36: 36, 40: 40,
+    48: 48, 56: 56, 64: 64, 80: 80, 96: 96, 112: 112, 128: 128,
+    144: 144, 160: 160, 176: 176, 192: 192, 208: 208, 224: 224,
+    240: 240, 256: 256, 288: 288, 320: 320, 384: 384, 9999: 9999,
+  },
+
+  // Alias tokens: Padding, Radius, Gap (ref = global size value in px)
+  sizeAliases: {
+    padding: [
+      { name: "padding-xs",  ref: 4  },
+      { name: "padding-sm",  ref: 8  },
+      { name: "padding-md",  ref: 12 },
+      { name: "padding-lg",  ref: 16 },
+      { name: "padding-xl",  ref: 20 },
+      { name: "padding-2xl", ref: 24 },
+      { name: "padding-3xl", ref: 28 },
+      { name: "padding-4xl", ref: 32 },
+      { name: "padding-5xl", ref: 36 },
+      { name: "padding-6xl", ref: 40 },
+      { name: "padding-7xl", ref: 48 },
+      { name: "padding-8xl", ref: 56 },
+      { name: "padding-9xl", ref: 80 },
+    ],
+    radius: [
+      { name: "radius-xs",   ref: 2    },
+      { name: "radius-sm",   ref: 4    },
+      { name: "radius-md",   ref: 8    },
+      { name: "radius-lg",   ref: 10   },
+      { name: "radius-xl",   ref: 12   },
+      { name: "radius-2xl",  ref: 16   },
+      { name: "radius-3xl",  ref: 24   },
+      { name: "radius-4xl",  ref: 32   },
+      { name: "radius-5xl",  ref: 48   },
+      { name: "radius-6xl",  ref: 80   },
+      { name: "radius-full", ref: 9999 },
+    ],
+    gap: [
+      { name: "gap-xs",  ref: 2  },
+      { name: "gap-sm",  ref: 4  },
+      { name: "gap-md",  ref: 6  },
+      { name: "gap-lg",  ref: 8  },
+      { name: "gap-xl",  ref: 12 },
+      { name: "gap-2xl", ref: 16 },
+      { name: "gap-3xl", ref: 20 },
+      { name: "gap-4xl", ref: 24 },
+    ],
   },
 
   // Radios (compartidos — las marcas pueden sobreescribir)
